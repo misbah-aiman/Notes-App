@@ -12,18 +12,12 @@ export default function MyNotesPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchNotes = () => { // REMOVED async
+    const fetchNotes = () => {
       try {
         setLoading(true)
         setError(null)
-        console.log('Fetching notes from localStorage...') // UPDATED
-        const notesData = getNotes() // REMOVED await
-        console.log('Received notes:', notesData)
+        const notesData = getNotes()
         setNotes(notesData)
-        
-        if (notesData.length === 0) {
-          console.log('No notes found - localStorage might be empty')
-        }
       } catch (error) {
         console.error('Error fetching notes:', error)
         setError('Failed to load notes. Check console for details.')
@@ -34,16 +28,14 @@ export default function MyNotesPage() {
     fetchNotes()
   }, [])
 
-  const handleDelete = (id: string) => { // REMOVED async
+  const handleDelete = (id: string) => {
     try {
       const noteToDelete = notes.find(n => n.id === id)
       if (!noteToDelete) return
 
-      // Move note to Bin
       const bin = getBin()
       saveBin([noteToDelete, ...bin])
 
-      // Remove from My Notes
       const newNotes = notes.filter(n => n.id !== id)
       saveNotes(newNotes)
       setNotes(newNotes)
@@ -58,21 +50,21 @@ export default function MyNotesPage() {
     setEditContent(note.content)
   }
 
-  const handleSaveEdit = () => { // REMOVED async
+  const handleSaveEdit = () => {
     if (!editingNote) return
 
     try {
       const updatedNote: Note = {
         ...editingNote,
         title: editTitle,
-        content: editContent
+        content: editContent,
+        updatedAt: new Date().toISOString()
       }
       
-      // Update in localStorage
       const updatedNotes = notes.map(note =>
         note.id === editingNote.id ? updatedNote : note
       )
-      saveNotes(updatedNotes) // SAVE TO LOCALSTORAGE
+      saveNotes(updatedNotes)
       
       setNotes(updatedNotes)
       setEditingNote(null)
@@ -222,12 +214,25 @@ export default function MyNotesPage() {
                       padding: '8px 12px',
                       backgroundColor: '#e8f5e8',
                       borderRadius: '8px',
-                      marginBottom: '10px'
+                      marginBottom: '8px'
                     }}>
                       <small style={{ color: '#2d5016', fontSize: '12px' }}>
-                        {new Date(note.createdAt).toLocaleString()}
+                        Created: {new Date(note.createdAt).toLocaleString()}
                       </small>
                     </div>
+                    
+                    {note.updatedAt && (
+                      <div style={{
+                        padding: '8px 12px',
+                        backgroundColor: 'rgba(232, 245, 232, 0.6)',
+                        borderRadius: '8px',
+                        marginBottom: '10px'
+                      }}>
+                        <small style={{ color: '#2d5016', fontSize: '12px' }}>
+                          Updated: {new Date(note.updatedAt).toLocaleString()}
+                        </small>
+                      </div>
+                    )}
                     
                     <div style={{ display: 'flex', gap: 10 }}>
                       <button 

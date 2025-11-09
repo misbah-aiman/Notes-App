@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Note } from '@/lib/types'
-import { getNotes, saveNotes } from '@/lib/storage' // FIXED IMPORT
+import { getNotes, saveNotes } from '@/lib/storage'
 
 export default function NewNotePage() {
   const router = useRouter()
@@ -10,7 +10,7 @@ export default function NewNotePage() {
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => { // REMOVED async
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     
@@ -23,7 +23,6 @@ export default function NewNotePage() {
         in_bin: false
       }
       
-      // FIXED: Get existing notes and add new note
       const existingNotes = getNotes()
       saveNotes([newNote, ...existingNotes])
       
@@ -62,7 +61,7 @@ export default function NewNotePage() {
         }}
         >+
         </div>
-        <h1 style={{ margin: 0 }}>New Note</h1>
+        <h1 style={{ margin: 0, color: 'black' }}>New Note</h1>
       </div>
       
       <form onSubmit={handleSubmit} style={{ 
