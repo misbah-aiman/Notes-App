@@ -9,15 +9,24 @@ export default function MyNotesPage() {
   const [editTitle, setEditTitle] = useState('')
   const [editContent, setEditContent] = useState('')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         setLoading(true)
+        setError(null)
+        console.log('Fetching notes from Supabase...')
         const notesData = await getNotes()
+        console.log('Received notes:', notesData)
         setNotes(notesData)
+        
+        if (notesData.length === 0) {
+          console.log('No notes found - database might be empty')
+        }
       } catch (error) {
         console.error('Error fetching notes:', error)
+        setError('Failed to load notes. Check console for details.')
       } finally {
         setLoading(false)
       }
@@ -27,10 +36,8 @@ export default function MyNotesPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      // Move note to bin in Supabase
       await moveToBin(id)
       
-      // Update local state
       const newNotes = notes.filter(n => n.id !== id)
       setNotes(newNotes)
     } catch (error) {
@@ -48,7 +55,6 @@ export default function MyNotesPage() {
     if (!editingNote) return
 
     try {
-      // Update note in Supabase
       const updatedNote: Note = {
         ...editingNote,
         title: editTitle,
@@ -56,8 +62,6 @@ export default function MyNotesPage() {
       }
       
       await updateNote(updatedNote)
-      
-      // Update local state
       const updatedNotes = notes.map(note =>
         note.id === editingNote.id ? updatedNote : note
       )
