@@ -31,25 +31,25 @@ export async function getBin(): Promise<Note[]> {
   return data || []
 }
 
-export async function saveNotes(notes: Note[]) {
-  for (const note of notes) {
-    const { error } = await supabase
-      .from('notes')
-      .insert([{
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        created_at: note.createdAt,
-        in_bin: false
-      }])
-    
-    if (error) {
-      console.error('Error saving note:', error)
-    }
+export async function saveNotes(note: Note) {
+  console.log('Inserting note:', note)
+  const { error } = await supabase
+    .from('notes')
+    .insert([{
+      id: note.id,
+      title: note.title,
+      content: note.content,
+      createdAt: note.createdAt,
+      in_bin: false
+    }])
+  
+  if (error) {
+    console.error('Error saving note:', error)
+    throw error
   }
+  console.log('Note inserted successfully')
 }
 
-// Save to bin (move note to bin)
 export async function saveBin(binNotes: Note[]) {
   for (const note of binNotes) {
     const { error } = await supabase

@@ -132,6 +132,7 @@ export default function BinPage() {
                   </small>
                 </div>
                 
+
                 <div style={{ display: 'flex', gap: 10 }}>
                   <button 
                     onClick={() => handleRestore(note.id)}

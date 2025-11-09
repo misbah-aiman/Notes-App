@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Note } from '@/lib/types'
-import { getNotes, saveNotes, getBin, moveToBin, updateNote } from '@/lib/supabase'
+import { getNotes, saveNotes, moveToBin, updateNote } from '@/lib/supabase' // FIXED IMPORTS
 
 export default function MyNotesPage() {
   const [notes, setNotes] = useState<Note[]>([])
@@ -147,7 +147,8 @@ export default function MyNotesPage() {
                       border: 'none',
                       borderRadius: '8px',
                       backgroundColor: 'white',
-                      outline: 'none'
+                      outline: 'none',
+                      color: 'black' // ADDED
                     }}
                   />
                   <textarea
@@ -162,7 +163,8 @@ export default function MyNotesPage() {
                       backgroundColor: 'white',
                       outline: 'none',
                       resize: 'vertical',
-                      fontFamily: 'inherit'
+                      fontFamily: 'inherit',
+                      color: 'black' // ADDED
                     }}
                   />
                   <div style={{ display: 'flex', gap: 10 }}>
