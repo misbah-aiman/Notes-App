@@ -86,11 +86,11 @@ export default function NewNotePage() {
           }}
           onFocus={(e) => {
             if (!loading) {
-              e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.08)'
+              e.target.style.backgroundColor = 'black'
             }
           }}
           onBlur={(e) => {
-            e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'
+            e.target.style.backgroundColor = 'black'
           }}
         />
         <textarea
