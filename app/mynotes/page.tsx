@@ -5,11 +5,14 @@ import { getNotes, saveNotes, getBin, saveBin } from '@/lib/storage'
 
 export default function MyNotesPage() {
   const [notes, setNotes] = useState<Note[]>([])
+  const [filteredNotes, setFilteredNotes] = useState<Note[]>([])
   const [editingNote, setEditingNote] = useState<Note | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [editContent, setEditContent] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
 
   useEffect(() => {
     const fetchNotes = () => {
@@ -18,6 +21,7 @@ export default function MyNotesPage() {
         setError(null)
         const notesData = getNotes()
         setNotes(notesData)
+        setFilteredNotes(notesData)
       } catch (error) {
         console.error('Error fetching notes:', error)
         setError('Failed to load notes. Check console for details.')
@@ -27,6 +31,17 @@ export default function MyNotesPage() {
     }
     fetchNotes()
   }, [])
+
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredNotes(notes)
+    } else {
+      const filtered = notes.filter(note =>
+        note.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      setFilteredNotes(filtered)
+    }
+  }, [searchQuery, notes])
 
   const handleDelete = (id: string) => {
     try {
@@ -104,28 +119,80 @@ export default function MyNotesPage() {
       backgroundColor: 'white'
     }}>
       <div style={{
-        display: 'inline-flex',
+        display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        gap: '15px',
         marginBottom: '30px',
-        padding: '10px 20px',
-        backgroundColor: '#e8f5e8',
-        borderRadius: '12px'
+        flexWrap: 'wrap',
+        gap: '15px'
       }}>
-        <h1 style={{ margin: 0, color: '#2d5016' }}>My Notes</h1>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '15px',
+          padding: '10px 20px',
+          backgroundColor: '#e8f5e8',
+          borderRadius: '12px'
+        }}>
+          <h1 style={{ margin: 0, color: '#2d5016' }}>My Notes</h1>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          {showSearch && (
+            <input
+              type="text"
+              placeholder="Search notes by title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                padding: '10px 15px',
+                fontSize: '14px',
+                border: 'none',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                outline: 'none',
+                color: 'black',
+                width: '250px'
+              }}
+            />
+          )}
+          <button
+            onClick={() => setShowSearch(!showSearch)}
+            style={{
+              width: '40px',
+              height: '40px',
+              backgroundColor: '#e8f5e8',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '16px'
+            }}
+          >
+            🔍
+          </button>
+        </div>
       </div>
 
-      {notes.length === 0 ? (
+      {filteredNotes.length === 0 ? (
         <p style={{
           padding: '20px',
           backgroundColor: 'rgba(0, 0, 0, 0.05)',
           borderRadius: '8px',
           textAlign: 'center',
           color: 'black'
-        }}>No notes yet.</p>
+        }}>
+          {searchQuery ? 'No notes found matching your search.' : 'No notes yet.'}
+        </p>
       ) : (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-          {notes.map(note => (
+          {filteredNotes.map(note => (
             <div key={note.id} style={{
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
               padding: 20,

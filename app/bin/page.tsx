@@ -1,17 +1,17 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Note } from '@/lib/types'
-import { getNotes, saveNotes, getBin, saveBin } from '@/lib/storage' // CHANGED IMPORT
+import { getNotes, saveNotes, getBin, saveBin } from '@/lib/storage' 
 
 export default function BinPage() {
   const [bin, setBin] = useState<Note[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchBinNotes = () => { // REMOVED async
+    const fetchBinNotes = () => { 
       try {
         setLoading(true)
-        const binData = getBin() // REMOVED await
+        const binData = getBin() 
         setBin(binData)
       } catch (error) {
         console.error('Error fetching bin notes:', error)
@@ -22,16 +22,14 @@ export default function BinPage() {
     fetchBinNotes()
   }, [])
 
-  const handleRestore = (id: string) => { // REMOVED async
+  const handleRestore = (id: string) => { 
     try {
       const noteToRestore = bin.find(n => n.id === id)
       if (!noteToRestore) return
 
-      // Move back to My Notes
       const notes = getNotes()
       saveNotes([noteToRestore, ...notes])
 
-      // Remove from Bin
       const newBin = bin.filter(n => n.id !== id)
       saveBin(newBin)
       setBin(newBin)
@@ -40,9 +38,8 @@ export default function BinPage() {
     }
   }
 
-  const handleDeletePermanently = (id: string) => { // REMOVED async
+  const handleDeletePermanently = (id: string) => { 
     try {
-      // Remove from Bin permanently
       const newBin = bin.filter(n => n.id !== id)
       saveBin(newBin)
       setBin(newBin)
